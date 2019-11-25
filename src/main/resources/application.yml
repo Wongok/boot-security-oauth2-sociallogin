@@ -1,0 +1,28 @@
+spring:
+  jpa:
+    show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: clientId
+            clientSecret: clientSecret
+            redirectUriTemplate: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - email
+              - profile
+          github:
+            clientId: clientId
+            clientSecret: clientSecret
+            redirectUriTemplate: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - user:email
+              - read:user
+          facebook:
+            clientId: clientId
+            clientSecret: clientSecret
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - public_profile
