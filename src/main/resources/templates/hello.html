@@ -7,6 +7,8 @@
 <body>
 Success
 <span id="user"></span>
+
+<a href="./logout" id="logoutBtn" style="display: none">logout</a>
 <script>
     window.onload = function () {
         var xhr = new XMLHttpRequest();
@@ -20,6 +22,8 @@ Success
                 var response = this.response;
                 var user = document.getElementById('user');
                 user.innerHTML = this.response.toString();
+                var logoutBtn = document.getElementById("logoutBtn");
+                logoutBtn.style.display = "block";
             }
         }
         xhr.open('GET', '/user', true);

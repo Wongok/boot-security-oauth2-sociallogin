@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
@@ -23,21 +24,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**", "/user")
-                .permitAll()
+                    .permitAll()
                 .antMatchers("/google").hasAnyAuthority(SocialType.GOOGLE.getRoleType())
                 .antMatchers("/github").hasAnyAuthority(SocialType.GITHUB.getRoleType())
                 .antMatchers("/facebook").hasAnyAuthority(SocialType.FACEBOOK.getRoleType())
-                .anyRequest().authenticated()
-                .and()
+                    .anyRequest().authenticated()
+            .and()
                 .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService)
+                    .userInfoEndpoint()
+                    .userService(customOAuth2UserService)
                 .and()
-                .defaultSuccessUrl("/loginSuccess")
-                .failureUrl("/loginFailure")
-                .and()
+                    .defaultSuccessUrl("/loginSuccess")
+                    .failureUrl("/loginFailure")
+            .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+            .and()
+                .logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/")
+//                    .deleteCookies()
+                    .invalidateHttpSession(true)
+                    .permitAll();
     }
 
     private ClientRegistration getRegistration(OAuth2ClientProperties clientProperties, String client) {
