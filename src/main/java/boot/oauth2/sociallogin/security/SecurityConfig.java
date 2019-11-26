@@ -1,5 +1,7 @@
 package boot.oauth2.sociallogin.security;
 
+import boot.oauth2.sociallogin.user.CustomOAuth2UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,19 +14,25 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**")
+                .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**", "/user")
                 .permitAll()
-                .antMatchers("/google").hasAuthority(SocialType.GOOGLE.getRoleType())
-                .antMatchers("/github").hasAuthority(SocialType.GITHUB.getRoleType())
-                .antMatchers("/facebook").hasAuthority(SocialType.FACEBOOK.getRoleType())
+                .antMatchers("/google").hasAnyAuthority(SocialType.GOOGLE.getRoleType())
+                .antMatchers("/github").hasAnyAuthority(SocialType.GITHUB.getRoleType())
+                .antMatchers("/facebook").hasAnyAuthority(SocialType.FACEBOOK.getRoleType())
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService)
+                .and()
                 .defaultSuccessUrl("/loginSuccess")
                 .failureUrl("/loginFailure")
                 .and()

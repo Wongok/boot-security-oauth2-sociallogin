@@ -19,7 +19,6 @@ Success
             if(this.readyState == 4 && this.status === 200) {
                 var response = this.response;
                 var user = document.getElementById('user');
-                var authority = document.getElementById('authority');
                 user.innerHTML = this.response.toString();
             }
         }
